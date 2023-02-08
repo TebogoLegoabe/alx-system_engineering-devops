@@ -1,2 +1,8 @@
 #!/bin/bash
+if [-e /tmp/iamafile ]
+then
 file_type=$(file /tmp/iamafile)
+echo "The file /tmp/iamafile is type: $file_type"
+else
+	echo "Error: The file /tmp/iamafile does not exits."
+fi
