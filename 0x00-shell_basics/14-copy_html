@@ -1,2 +1,2 @@
 #!/bin/bash
-if [-e /tmp/iamafile ]then file_type=$(file /tmp/iamafile) fi
+cp -u *.html ..
