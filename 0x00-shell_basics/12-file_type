@@ -1,2 +1,2 @@
 #!/bin/bash
-iamafile
+file_path="/tmp/iamafile"
