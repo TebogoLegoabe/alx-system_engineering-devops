@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# This script displays the time from 0 hours to 12 hours and from 1 minute to 59 minutes.
+
+hours=0
+minutes=1
+count=1
+
+while [ $hours -le 12 ]
+do
+    while [ $minutes -le 59 ]
+    do
+        printf "%02d:%02d\n" $hours $minutes
+
+        ((count++))
+        ((minutes++))
+
+        if [ $count -gt 70 ]
+        then
+            break 2
+        fi
+    done
+
+    ((hours++))
+    minutes=0
+done | head -n 70
