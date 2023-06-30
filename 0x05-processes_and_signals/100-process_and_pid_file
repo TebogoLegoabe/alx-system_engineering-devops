@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#Bash script that:
+#Creates the file /var/run/myscript.pid containing its PID
+#Displays To infinity and beyond indefinitely
+#Displays I hate the kill command when receiving a SIGTERM signal
+#Displays Y U no love me?! when receiving a SIGINT signal
+#Deletes the file /var/run/myscript.pid and terminates itself when receiving a SIGQUIT or SIGT#ERM signal
+
+pid=$(echo $$)
+
+echo $pid > /var/run/myscript.pid
+while :;
+do
+
+  echo "To infinity and beyond"
+  sleep 2
+
+done
+
+trap 'exit 1' SIGTERM
+trap 'exit 1' SIGINT
+trap 'rm -f /var/run/myscript.pid; exit 0' SIGQUIT
