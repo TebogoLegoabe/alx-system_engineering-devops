@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-#configures a new Ubuntu machine to respect above requirements
+#install nginx on web server; Nginx should be listening on port 80
+#curl must return a page with string Hello World!
 
 sudo apt-get -y update
 sudo apt-get -y install nginx
