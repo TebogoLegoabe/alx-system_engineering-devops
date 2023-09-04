@@ -1,41 +1,55 @@
 #!/usr/bin/env bash
 
-# Install HAproxy
+# Installs, configures, and starts the load balancer
 sudo apt update
-sudo apt install haproxy
+sudo apt-get -y install --no-install-recommends software-properties-common
+sudo add-apt-repository -y ppa:vbernat/haproxy-2.5
+sudo apt-get -y install haproxy
 
-# Create a HAproxy configuration file
-sudo nano /etc/haproxy/haproxy.cfg
+# the load balancer's configuration
+DOMAIN_NAME='244023-web-01'
+INIT_FILE='/etc/default/haproxy'
+CONFIG_FILE='/etc/haproxy/haproxy.cfg'
+HAPROXY_LB_CONFIG=\
+"
+#--$DOMAIN_NAME-params-begin--
+backend $DOMAIN_NAME-backend
+	balance roundrobin
+	server 244023-web-01 52.91.153.40:80 check
+	server 244023-web-02 54.84.51.64:80 check
+frontend $DOMAIN_NAME-frontend
+	bind *:80
+	mode http
+	default_backend $DOMAIN_NAME-backend
+#--$DOMAIN_NAME-params-end--
+"
 
-# Add the following lines to the configuration file:
+[ -f "$INIT_FILE" ] || touch "$INIT_FILE"
+[ -f "$CONFIG_FILE" ] || touch "$CONFIG_FILE"
 
-global
-    # The user and group that will run HAproxy
-    user haproxy
-    group haproxy
+CONFIG_WORDS=$(grep -Eco "$DOMAIN_NAME-backend" < $CONFIG_FILE)
 
-defaults
-    log     global
-    mode    http
-    option  httplog
-    option  dontlognull
-    retries 3
-    maxconn 2000
+if [ "$(grep -Eco '^ENABLED=[01]$' < $INIT_FILE)" -gt 0 ]; then
+	sed -i 's/^ENABLED=0$/ENABLED=1/' "$INIT_FILE"
+else
+	echo 'ENABLED=1' >> $INIT_FILE
+fi
 
-listen frontend
-    bind 0.0.0.0:80
-    default_backend backend
+if [ "$CONFIG_WORDS" -eq 0 ]; then
+	echo -e "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
+else
+	start_tkn="#--$DOMAIN_NAME-params-begin--"
+	end_tkn="#--$DOMAIN_NAME-params-end--"
+	a=$(grep -onE "$start_tkn" < "$CONFIG_FILE" | cut -d : -f1)
+	b=$(grep -onE "$end_tkn" < "$CONFIG_FILE" | cut -d : -f1)
+	a=$((a - 1))
+	b=$((b + 1))
+	sed -i "$a,$b"d "$CONFIG_FILE"
+	echo -en "$HAPROXY_LB_CONFIG" >> $CONFIG_FILE
+fi
 
-backend backend
-    server web-01 52.91.153.40:80 weight 10
-    server web-02 54.84.51.64:80 weight 10
-
-# Save and close the configuration file.
-
-sudo haproxy -f /etc/haproxy/haproxy.cfg
-
-# Enable HAproxy to start at boot
-sudo systemctl enable haproxy
-
-# Start HAproxy
-sudo systemctl start haproxy
+if [ "$(pgrep -c haproxy)" -le 0 ]; then
+	service haproxy start
+else
+	service haproxy restart
+fi
