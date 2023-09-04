@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# Install HAproxy
+sudo apt update
+sudo apt install haproxy
+
+# Create a HAproxy configuration file
+sudo nano /etc/haproxy/haproxy.cfg
+
+# Add the following lines to the configuration file:
+
+global
+    # The user and group that will run HAproxy
+    user haproxy
+    group haproxy
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    retries 3
+    maxconn 2000
+
+listen frontend
+    bind 0.0.0.0:80
+    default_backend backend
+
+backend backend
+    server web-01 52.91.153.40:80 weight 10
+    server web-02 54.84.51.64:80 weight 10
+
+# Save and close the configuration file.
+
+sudo haproxy -f /etc/haproxy/haproxy.cfg
+
+# Enable HAproxy to start at boot
+sudo systemctl enable haproxy
+
+# Start HAproxy
+sudo systemctl start haproxy
