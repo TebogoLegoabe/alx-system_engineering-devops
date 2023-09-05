@@ -21,5 +21,11 @@ backend web_servers
 # enable haproxy to be started by init script
 sed -i '/#EXTRAOPTS="-de -m 16"/a ENABLED=1' /etc/default/haproxy
 
+# modify default Nginx configuration; add rewrite rule, error_page & header
+sudo sed -i "s/server_name _;/server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/ permanent;\n\n\terror_page 404 \/404.html;\n\tlocation = \/custom_404.html {\n\t\troot \/usr\/share\/nginx\/html;\n\t\tinternal;\n\t}/" /etc/nginx/sites-available/default
+
+# modify default Nginx configuration; add custom header
+sudo sed -i "s/include \/etc\/nginx\/sites-enabled\/\*;/include \/etc\/nginx\/sites-enabled\/\*;\n\tadd_header X-Served-By \"$HOSTNAME\";/" /etc/nginx/nginx.conf
+
 # restart HAproxy service
 sudo service haproxy restart
