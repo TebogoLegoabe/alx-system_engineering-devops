@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
 #script with minimum number of commands to aytomate the fix
-
 sudo sed -i "s/8080/80/" /etc/nginx/sites-enabled/default
 sudo service nginx restart
