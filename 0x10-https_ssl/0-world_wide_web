@@ -12,6 +12,6 @@ for subdomain in "${subdomains[@]}"
 do
 	if [ -z "$2" ] || [ "$2" == "$subdomain" ] ;
 	then
-		display_dns_infor "$1" "$subdomain"
+	domain "$1" "$subdomain"
 	fi
 done
