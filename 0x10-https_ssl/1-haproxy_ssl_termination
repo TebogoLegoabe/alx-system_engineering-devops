@@ -1,0 +1,23 @@
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    maxconn 4096
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    retries 3
+    timeout connect 5000
+    timeout client 50000
+    timeout server 50000
+
+listen www
+    bind 0.0.0.0:443 ssl crt /etc/letsencrypt/live/www.holberton.online/fullchain.pem
+    mode http
+    default_backend webservers
+
+backend webservers
+server web-01 52.91.153.40:80 check
+server web-02 54.84.51.64:80 check
