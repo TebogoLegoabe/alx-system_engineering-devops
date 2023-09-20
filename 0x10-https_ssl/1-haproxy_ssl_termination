@@ -19,5 +19,5 @@ listen www
     default_backend webservers
 
 backend webservers
-server web-01 52.91.153.40:80 check
-server web-02 54.84.51.64:80 check
+server web-01 18.234.105.35 check
+server web-02 18.210.20.138 check

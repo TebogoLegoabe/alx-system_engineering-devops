@@ -5,7 +5,7 @@ domain() {
 	dig "$2"."$1" | awk 'c&&!--c;/;; ANSWER SECTION:/{c=1}' | awk -v subdomain="$2" '{print "The subdomain " subdomain " is a " $4 " record and points to " $5 }'
 	return 0
 }
-subdomains=("www" "54.87.214.247" "web-01" "52.91.153.40" "web-02" "54.84.51.64")
+subdomains=("www" "18.234.105.35" "web-01" "18.210.20.138" "web-02" "34.204.61.126")
 
 for subdomain in "${subdomains[@]}"
 do
