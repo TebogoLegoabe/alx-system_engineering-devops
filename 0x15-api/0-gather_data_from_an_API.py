@@ -8,27 +8,22 @@ import requests
 import sys
 
 
-if __name__ == '__main__':
-    employeeId = sys.argv[1]
-    baseUrl = "https://jsonplaceholder.typicode.com/users"
-    url = baseUrl + "/" + employeeId
+def todo(userid):
+    """doc stringed"""
+    name = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}'.format(
+            userid)).json().get('name')
+    tasks = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}/todos'.format(
+            userid)).json()
+    tasksDone = ['\t {}\n'.format(dic.get('title')) for dic in tasks
+                 if dic.get('completed')]
+    if name and tasks:
+        print("Employee {} is done with tasks({}/{}):".format
+              (name, len(tasksDone), len(tasks)))
+        print(''.join(tasksDone), end='')
 
-    response = requests.get(url)
-    employeeName = response.json().get('name')
 
-    todoUrl = url + "/todos"
-    response = requests.get(todoUrl)
-    tasks = response.json()
-    done = 0
-    done_tasks = []
-
-    for task in tasks:
-        if task.get('completed'):
-            done_tasks.append(task)
-            done += 1
-
-    print("Employee {} is done with tasks({}/{}):"
-          .format(employeeName, done, len(tasks)))
-
-    for task in done_tasks:
-        print("\t {}".format(task.get('title')))
+if __name__ == "__main__":
+    if len(argv) == 2:
+        todo(int(argv[1]))
