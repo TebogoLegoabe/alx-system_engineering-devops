@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" get subs"""
+"""Query Reddit API to determine subreddit sub count"""
 from requests import get
 from sys import argv
 
