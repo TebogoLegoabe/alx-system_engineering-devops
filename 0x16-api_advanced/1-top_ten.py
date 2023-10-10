@@ -5,8 +5,7 @@ from sys import argv
 
 
 def top_ten(subreddit):
-     """Request top ten hot posts of subreddit
-    from Reddit API"""
+     """Request top ten hot posts of subreddit from Reddit API"""
     head = {'User-Agent': 'Dan Kazam'}
     try:
         count = get('https://www.reddit.com/r/{}/hot.json?count=10'.format(
