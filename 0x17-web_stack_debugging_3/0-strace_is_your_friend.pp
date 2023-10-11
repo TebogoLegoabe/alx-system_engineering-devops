@@ -1,4 +1,4 @@
-# strace - fixed .phpp in wp-settings.php
+#Using strace, find out why Apache is returning a 500 error
 exec { 'fixed-phpp':
   command => "sed -i 's/phpp/php/g' /var/www/html/wp-settings.php",
   path    => '/bin';
